@@ -11,6 +11,7 @@ import {
 import { LineOAService } from './line-oa.service';
 import { LineOALinkingService } from './line-oa-linking.service';
 import { LineOAWebhookService } from './line-oa-webhook.service';
+import { HookidWebhookService } from './hookid-webhook.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('/api/line-oa')
@@ -19,6 +20,7 @@ export class LineOAController {
     private readonly lineOAService: LineOAService,
     private readonly linkingService: LineOALinkingService,
     private readonly webhookService: LineOAWebhookService,
+    private readonly hookidWebhookService: HookidWebhookService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -92,6 +94,41 @@ export class LineOAController {
     @Headers('x-line-signature') signature: string,
   ) {
     return await this.webhookService.handleWebhook(body, signature || '');
+  }
+
+  /**
+   * HOOKID Webhook Endpoint
+   * Pattern: ตอบ 200 OK ทันที, ประมวลผลแบบ async
+   */
+  @Post('hookid/events')
+  @HttpCode(200)
+  async handleHookidWebhook(@Body() payload: any) {
+    return await this.hookidWebhookService.handleWebhook(payload);
+  }
+
+  /**
+   * ตรวจสอบสถานะ Hookid Event
+   */
+  @Get('hookid/status')
+  async getHookidEventStatus(@Query('referenceId') referenceId: string) {
+    const event = await this.prisma.hookidEvent.findFirst({
+      where: {
+        OR: [{ referenceId }, { id: parseInt(referenceId) || 0 }],
+      },
+    });
+
+    if (!event) {
+      return { error: 'Event not found', status: null };
+    }
+
+    return {
+      eventId: event.eventId,
+      referenceId: event.referenceId,
+      status: event.status,
+      processedAt: event.processedAt,
+      errorMessage: event.errorMessage,
+      retryCount: event.retryCount,
+    };
   }
 
   // ===================== Notifications =====================

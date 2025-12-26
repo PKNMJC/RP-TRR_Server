@@ -4,6 +4,7 @@ import { LineOAService } from './line-oa.service';
 import { LineOAWebhookService } from './line-oa-webhook.service';
 import { LineOALinkingService } from './line-oa-linking.service';
 import { LineOANotificationService } from './line-oa-notification.service';
+import { HookidWebhookService } from './hookid-webhook.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
@@ -13,8 +14,9 @@ import { PrismaService } from '../prisma/prisma.service';
     LineOAWebhookService,
     LineOALinkingService,
     LineOANotificationService,
+    HookidWebhookService,
     PrismaService,
   ],
-  exports: [LineOAService, LineOANotificationService],
+  exports: [LineOAService, LineOANotificationService, HookidWebhookService],
 })
 export class LineOAModule {}
