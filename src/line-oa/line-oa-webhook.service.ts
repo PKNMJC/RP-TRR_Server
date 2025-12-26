@@ -153,7 +153,7 @@ export class LineOAWebhookService {
             action: {
               type: 'uri',
               label: 'แจ้งซ่อม',
-              uri: `${formUrl}/repair-request?lineId=${lineUserId}`,
+              uri: `${formUrl}/tickets/create?lineId=${lineUserId}`,
             },
           },
         ],
