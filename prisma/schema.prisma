@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -114,7 +115,7 @@ model Ticket {
   status   TicketStatus @default(OPEN)
 
   // Repair-specific fields
-  notes        String? @db.LongText
+  notes        String? @db.Text
   requiredDate String?
 
   // Attachments
