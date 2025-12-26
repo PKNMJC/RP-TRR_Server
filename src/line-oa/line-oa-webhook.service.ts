@@ -152,8 +152,16 @@ export class LineOAWebhookService {
             type: 'action',
             action: {
               type: 'uri',
-              label: 'แจ้งซ่อม',
+              label: '📝 แจ้งซ่อม',
               uri: `${formUrl}/tickets/create?lineId=${lineUserId}`,
+            },
+          },
+          {
+            type: 'action',
+            action: {
+              type: 'uri',
+              label: '📋 ดูสถานะ',
+              uri: `${formUrl}/tickets?lineId=${lineUserId}`,
             },
           },
         ],
