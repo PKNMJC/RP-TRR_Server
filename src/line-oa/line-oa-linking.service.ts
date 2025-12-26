@@ -232,7 +232,7 @@ export class LineOALinkingService {
 
     const message: any = {
       type: 'text',
-      text: 'ยินดีต้อนรับ! 👋\n\nเพื่อใช้งานระบบแจ้งซ่อมฝ่าย IT คุณต้องเชื่อมต่อบัญชีของคุณก่อน\n\nกรุณาไปที่ https://it-repair.example.com เพื่อเชื่อมต่อ',
+      text: 'ยินดีต้อนรับ! 👋\n\nเพื่อใช้งานระบบแจ้งซ่อมฝ่าย IT คุณต้องเชื่อมต่อบัญชีของคุณก่อน\n\nกรุณาไปที่ https://rp-trr-server-red.vercel.app/api/line-oa/webhook เพื่อเชื่อมต่อ',
     };
 
     try {
