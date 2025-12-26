@@ -11,6 +11,7 @@ import {
 import { LineOAService } from './line-oa.service';
 import { LineOALinkingService } from './line-oa-linking.service';
 import { LineOAWebhookService } from './line-oa-webhook.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('/api/line-oa')
 export class LineOAController {
@@ -18,6 +19,7 @@ export class LineOAController {
     private readonly lineOAService: LineOAService,
     private readonly linkingService: LineOALinkingService,
     private readonly webhookService: LineOAWebhookService,
+    private readonly prisma: PrismaService,
   ) {}
 
   // ===================== Account Linking =====================
@@ -37,14 +39,28 @@ export class LineOAController {
    */
   @Post('linking/verify')
   async verifyLink(
-    @Body('userId') userId: number = 1,
-    @Body('lineUserId') lineUserId: string,
-    @Body('verificationToken') verificationToken: string,
+    @Body('userId') userId?: number,
+    @Body('lineUserId') lineUserId?: string,
+    @Body('verificationToken') verificationToken?: string,
   ) {
+    // ถ้าไม่มี userId ให้สร้าง account ใหม่
+    if (!userId || userId === 0) {
+      // สร้าง user ใหม่สำหรับ LINE
+      const newUser = await this.prisma.user.create({
+        data: {
+          name: `LINE User ${lineUserId?.substring(0, 8)}`,
+          email: `line_${lineUserId}@line.local`,
+          password: 'line_oauth_' + Math.random().toString(36).substring(7),
+          department: 'General',
+        },
+      });
+      userId = newUser.id;
+    }
+
     return await this.linkingService.verifyLink(
       userId || 1,
-      lineUserId,
-      verificationToken,
+      lineUserId || '',
+      verificationToken || '',
     );
   }
 

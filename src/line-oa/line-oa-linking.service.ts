@@ -127,6 +127,8 @@ export class LineOALinkingService {
     this.logger.log(`User ${userId} linked with LINE account ${lineUserId}`);
 
     return {
+      success: true,
+      isLinked: true,
       message: 'Account linked successfully',
       data: {
         userId: updatedLink.userId,
@@ -230,9 +232,23 @@ export class LineOALinkingService {
       channelAccessToken: process.env.LINE_ACCESS_TOKEN,
     });
 
+    const linkingUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/line-oa/link?lineId=${lineUserId}`;
+
     const message: any = {
       type: 'text',
-      text: 'ยินดีต้อนรับ! 👋\n\nเพื่อใช้งานระบบแจ้งซ่อมฝ่าย IT คุณต้องเชื่อมต่อบัญชีของคุณก่อน\n\nกรุณาไปที่ https://rp-trr-server-red.vercel.app/api/line-oa/webhook เพื่อเชื่อมต่อ',
+      text: '👋 สวัสดีค่ะ\n\nเพื่อใช้งานระบบแจ้งซ่อมฝ่าย IT คุณต้องเชื่อมต่อบัญชีของคุณก่อน',
+      quickReply: {
+        items: [
+          {
+            type: 'action',
+            action: {
+              type: 'uri',
+              label: '🔗 เชื่อมต่อบัญชี',
+              uri: linkingUrl,
+            },
+          },
+        ],
+      },
     };
 
     try {
