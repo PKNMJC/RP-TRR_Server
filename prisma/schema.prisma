@@ -258,21 +258,21 @@ enum HookidEventStatus {
 }
 
 model HookidEvent {
-  id          Int                @id @default(autoincrement())
-  eventId     String             @unique // From hookid
+  id          Int               @id @default(autoincrement())
+  eventId     String            @unique // From hookid
   type        String // message, postback, etc.
   lineUserId  String
   timestamp   BigInt
-  status      HookidEventStatus  @default(PENDING)
-  referenceId String?            // Link to ticket, loan, etc.
+  status      HookidEventStatus @default(PENDING)
+  referenceId String? // Link to ticket, loan, etc.
 
   // Event payload
-  payload     String             @db.Text // JSON data
+  payload String @db.Text // JSON data
 
   // Processing info
-  processedAt DateTime?
+  processedAt  DateTime?
   errorMessage String?
-  retryCount  Int                @default(0)
+  retryCount   Int       @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

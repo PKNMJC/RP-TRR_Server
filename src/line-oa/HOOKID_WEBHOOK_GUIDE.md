@@ -31,6 +31,7 @@
 **Pattern:** Immediate Response (200 OK) + Async Processing
 
 **Request Body:**
+
 ```json
 {
   "eventId": "hookid_20251226_abc123",
@@ -46,6 +47,7 @@
 ```
 
 **Response (Immediate):**
+
 ```json
 {
   "status": "received",
@@ -55,6 +57,7 @@
 ```
 
 **Processing (Background - Async):**
+
 - ✅ บันทึก event ลง DB (HookidEvent table)
 - ✅ จัดการข้อความตามประเภท event
   - `message`: สร้าง Ticket ใหม่
@@ -71,6 +74,7 @@
 **Endpoint:** `GET /api/line-oa/hookid/status?referenceId=<reference_id>`
 
 **Response:**
+
 ```json
 {
   "eventId": "hookid_20251226_abc123",
@@ -106,6 +110,7 @@ FRONTEND_URL=https://yourapp.com
 ## 📊 Database Schema
 
 ### HookidEvent Model
+
 ```prisma
 model HookidEvent {
   id          Int                @id @default(autoincrement())
@@ -115,15 +120,15 @@ model HookidEvent {
   timestamp   BigInt
   status      HookidEventStatus  // PENDING, PROCESSING, PROCESSED, FAILED
   referenceId String?            // Link to ticket/loan
-  
+
   payload     String             @db.Text // JSON
   processedAt DateTime?
   errorMessage String?
   retryCount  Int                @default(0)
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([lineUserId])
   @@index([status])
   @@index([eventId])
@@ -154,13 +159,13 @@ enum HookidEventStatus {
      "userId": "U1234567890",
      "data": { "message": "สอบถามเรื่องแจ้งซ่อมไทย" }
    }
-   
+
 3. Backend responds immediately (200 OK):
    {
      "status": "received",
      "referenceId": "hookid_ev_001_xyz"
    }
-   
+
 4. Backend (Async):
    - Find LINE link → User ID
    - Create Ticket (TK20251226ABC12)
@@ -183,9 +188,9 @@ enum HookidEventStatus {
      "userId": "U1234567890",
      "data": { "postbackData": "action=status_inquiry" }
    }
-   
+
 3. Backend responds (200 OK)
-   
+
 4. Backend (Async):
    - Find latest ticket
    - Send status via LINE
@@ -292,10 +297,10 @@ SELECT * FROM "HookidEvent" WHERE status = 'PENDING' ORDER BY "createdAt" DESC;
 SELECT * FROM "HookidEvent" WHERE status = 'FAILED' ORDER BY "createdAt" DESC;
 
 # Get success rate
-SELECT 
-  status, 
-  COUNT(*) as count 
-FROM "HookidEvent" 
+SELECT
+  status,
+  COUNT(*) as count
+FROM "HookidEvent"
 WHERE "createdAt" > NOW() - INTERVAL '24 hours'
 GROUP BY status;
 ```
@@ -316,13 +321,17 @@ this.logger.error(`[Hookid] Error: ${error.message}`);
 ## 🆘 Troubleshooting
 
 ### Issue: "No linked user found"
+
 **Solution:** User needs to link their LINE account first
+
 ```
 User → Click "Link LINE" → Scan QR → Verify → Linked ✅
 ```
 
 ### Issue: "Event processing timeout"
+
 **Solution:** Increase async timeout in main.ts
+
 ```typescript
 // main.ts
 const app = await NestFactory.create(AppModule, {
@@ -332,7 +341,9 @@ app.use(express.json({ limit: '10mb' }));
 ```
 
 ### Issue: "Hookid callback fails"
+
 **Solution:** Check callback URL and secret in .env
+
 ```bash
 HOOKID_CALLBACK_URL=https://api.yourapp.com/api/line-oa/hookid/callback
 HOOKID_SECRET=your_secret_key
