@@ -1,0 +1,2 @@
+-- Update TicketStatus enum to add WAITING_USER and CANCEL
+ALTER TABLE `Ticket` MODIFY COLUMN `status` ENUM('OPEN', 'IN_PROGRESS', 'WAITING_USER', 'DONE', 'CANCEL') NOT NULL DEFAULT 'OPEN';
