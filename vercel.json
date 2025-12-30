@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "devCommand": "npm run start:dev",
+  "installCommand": "npm install",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "src/main.ts": {
+      "runtime": "nodejs18.x",
+      "handler": "dist/main.js",
+      "environment": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/main.ts"
+    }
+  ],
+  "github": {
+    "enabled": false,
+    "silent": true
+  }
+}
