@@ -1,3 +1,6 @@
+// Register tsconfig paths at runtime
+import 'tsconfig-paths/register';
+
 import { NestFactory } from '@nestjs/core';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
