@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { INestApplication } from '@nestjs/common';
+import { AppModule } from '../src/app.module';
 
-let app;
+let app: INestApplication;
 
 export default async (req: any, res: any) => {
   // Create app once and reuse for subsequent requests
