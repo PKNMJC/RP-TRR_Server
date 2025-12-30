@@ -1,31 +1,67 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
-import { INestApplication } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
+import { LoggingInterceptor } from '@common/interceptors/logging.interceptor';
+import { TransformInterceptor } from '@common/interceptors/transform.interceptor';
+import { Request, Response } from 'express';
 
-// For Vercel Serverless deployment
-// Local development should use main-local.ts
-
-export let app: INestApplication;
+let app;
 
 async function createApp() {
   if (!app) {
-    app = await NestFactory.create(AppModule);
+    app = await NestFactory.create(AppModule, {
+      bufferLogs: true,
+    });
+
+    // Global setup
+    app.enableCors({
+      origin: process.env.FRONTEND_URL,
+      credentials: true,
+    });
+
+    app.useGlobalFilters(new HttpExceptionFilter());
+    app.useGlobalInterceptors(
+      new LoggingInterceptor(),
+      new TransformInterceptor(),
+    );
+
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
+
+    // Swagger (เปิดเฉพาะ dev)
+    if (process.env.NODE_ENV !== 'production') {
+      const config = new DocumentBuilder()
+        .setTitle('IT Repair Ticketing System API')
+        .setVersion('1.0.0')
+        .addBearerAuth()
+        .build();
+
+      const document = SwaggerModule.createDocument(app, config);
+      SwaggerModule.setup('api/docs', app, document);
+    }
+
     await app.init();
   }
   return app;
 }
 
-export default async (req: any, res: any) => {
+// Vercel handler
+export default async (req: Request, res: Response) => {
   const nestApp = await createApp();
-  const expressApp = nestApp.getHttpAdapter().getInstance();
-  expressApp(req, res);
+  const server = nestApp.getHttpAdapter().getInstance();
+  server(req, res);
 };
 
-// Allow bootstrapping for local testing
+// Local debug (optional)
 if (require.main === module) {
   createApp().then(() => {
-    const logger = new Logger('Bootstrap');
-    logger.log('App initialized for Vercel');
+    new Logger('Bootstrap').log('App initialized for Vercel');
   });
 }

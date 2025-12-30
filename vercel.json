@@ -1,25 +1,19 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "framework": "nestjs",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "@vercel/node@3.0.11",
-      "maxDuration": 30
+  "builds": [
+    {
+      "src": "dist/main.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/index.ts"
+      "dest": "dist/main.js"
     }
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
-    }
   }
 }
