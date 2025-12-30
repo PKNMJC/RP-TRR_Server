@@ -9,7 +9,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "build": "nest build",
+    "build": "prisma generate && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main-local",
     "start:dev": "nest start --watch -e ts-node -- -r tsconfig-paths/register src/main-local.ts",
@@ -34,6 +34,7 @@
     "@nestjs/swagger": "^11.2.3",
     "@nestjs/throttler": "^6.5.0",
     "@nestjs/websockets": "^11.1.11",
+    "@prisma/client": "^5.22.0",
     "aws-sdk": "^2.1693.0",
     "bcrypt": "^6.0.0",
     "bull": "^4.16.5",
