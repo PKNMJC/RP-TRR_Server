@@ -1,28 +1,21 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "devCommand": "npm run start:dev",
-  "installCommand": "npm install",
-  "env": {
-    "NODE_ENV": "production"
-  },
+  "framework": "nestjs",
   "functions": {
-    "src/main.ts": {
+    "api/index.ts": {
       "runtime": "nodejs18.x",
-      "handler": "dist/main.js",
-      "environment": {
-        "NODE_ENV": "production"
-      }
+      "maxDuration": 30
     }
   },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/main.ts"
+      "dest": "api/index.ts"
     }
   ],
-  "github": {
-    "enabled": false,
-    "silent": true
+  "env": {
+    "NODE_ENV": "production",
+    "NODE_OPTIONS": "--max_old_space_size=3076"
   }
 }
